@@ -3,13 +3,30 @@ import { useForm } from "react-hook-form";
 
 import { useNavigate } from "react-router-dom";
 import loginImage from "../assets/login.svg";
+import { useDispatch, useSelector } from "react-redux";
+import { googleLogin, loginUser } from "../features/auth/authSlice";
 const Login = () => {
   const { register, handleSubmit, reset } = useForm();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { email } = useSelector(state => state.auth.user)
+  const { isLoading } = useSelector(state => state.auth)
 
   const onSubmit = (data) => {
     console.log(data);
+    dispatch(loginUser(data));
   };
+
+  useEffect(() => {
+    if (email && !isLoading) {
+      navigate("/")
+    }
+  }, [email, isLoading])
+
+  const handleGoogleLogin = () => {
+    dispatch(googleLogin());
+  }
+
 
   return (
     <div className='flex h-screen items-center'>
@@ -58,6 +75,7 @@ const Login = () => {
               </div>
             </div>
           </form>
+          <button className='font-bold text-white py-3 rounded-full bg-blue-500 w-full mt-4' onClick={handleGoogleLogin}>Google Login</button>
         </div>
       </div>
     </div>
