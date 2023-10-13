@@ -2,13 +2,24 @@ import React, { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { FaChevronLeft } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import { useRegisterMutation } from "../../features/auth/authAPI";
+import { toast } from "react-hot-toast";
 
 const CandidateRegistration = () => {
   const [countries, setCountries] = useState([]);
-  const { handleSubmit, register, control } = useForm();
+  const { email } = useSelector(state => state.auth.user);
+  const { handleSubmit, register, control, reset } = useForm({
+    defaultValues: {
+      email
+    }
+  });
   const term = useWatch({ control, name: "term" });
-  console.log(term);
   const navigate = useNavigate();
+
+  const dispatch = useDispatch();
+  const [postUser, { isLoading }] = useRegisterMutation();
+
 
   useEffect(() => {
     fetch("https://restcountries.com/v3.1/all")
@@ -17,7 +28,10 @@ const CandidateRegistration = () => {
   }, []);
 
   const onSubmit = (data) => {
+    toast.success("Successfully Registered!");
     console.log(data);
+    reset();
+    dispatch(postUser({ ...data, role: "candidate" }));
   };
 
   return (

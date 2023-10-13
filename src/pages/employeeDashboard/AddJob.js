@@ -1,9 +1,21 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { FiTrash } from "react-icons/fi";
+import { useDispatch, useSelector } from "react-redux";
+import { usePostJobMutation } from "../../features/job/jobAPI";
+import { toast } from "react-hot-toast";
 
 const AddJob = () => {
-  const { handleSubmit, register, control } = useForm();
+  const { companyName } = useSelector(state => state.auth.user)
+  const [postJob, { isLoading }] = usePostJobMutation();
+  const dispatch = useDispatch();
+
+
+  const { handleSubmit, register, control, reset } = useForm({
+    defaultValues: {
+      companyName,
+    }
+  });
   const {
     fields: resFields,
     append: resAppend,
@@ -21,7 +33,10 @@ const AddJob = () => {
   } = useFieldArray({ control, name: "requirements" });
 
   const onSubmit = (data) => {
+    toast.success('Successfully Added Job!')
     console.log(data);
+    reset();
+    dispatch(postJob(data))
   };
 
   return (
