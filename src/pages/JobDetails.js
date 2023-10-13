@@ -1,17 +1,25 @@
-import React from "react";
+import React, { useState } from "react";
 
 import meeting from "../assets/meeting.jpg";
 import { BsArrowRightShort, BsArrowReturnRight } from "react-icons/bs";
 import { useParams } from "react-router-dom";
-import { useApplyMutation, useGetJobByIdQuery } from "../features/job/jobAPI";
+import { useApplyMutation, useGetJobByIdQuery, useQuerryMutation, useReplyMutation } from "../features/job/jobAPI";
 import { useDispatch, useSelector } from "react-redux";
 const JobDetails = () => {
   const { id } = useParams();
-  const { data, isLoading } = useGetJobByIdQuery(id);
+  const { data, isLoading } = useGetJobByIdQuery(id, {
+    pollingInterval: 1000
+  });
   const [apply] = useApplyMutation();
   const dispatch = useDispatch()
 
   const { _id: userId, email, role } = useSelector(state => state.auth.user)
+
+  const [querry] = useQuerryMutation()
+
+  const [reply] = useReplyMutation();
+
+  const [userReply, setUserReply] = useState("")
 
   const {
     companyName,
@@ -38,6 +46,26 @@ const JobDetails = () => {
     }
     dispatch(apply(data))
   };
+  const handleQuery = (e) => {
+    e.preventDefault()
+    const newData = {
+      userId: userId,
+      jobId: _id,
+      email: email,
+      question: e.target.query.value,
+    }
+    dispatch(querry(newData))
+
+  }
+  const handleReply = (id) => {
+    console.log(userReply);
+    const newData = {
+      userId: id,
+      reply: userReply,
+    }
+    console.log(newData);
+    dispatch(reply(newData))
+  }
 
   return (
     <div className='pt-14 grid grid-cols-12 gap-5'>
@@ -63,8 +91,8 @@ const JobDetails = () => {
           <div>
             <h1 className='text-primary text-lg font-medium mb-3'>Skills</h1>
             <ul>
-              {skills?.map((skill) => (
-                <li className='flex items-center'>
+              {skills?.map((skill, index) => (
+                <li className='flex items-center' key={index}>
                   <BsArrowRightShort /> <span>{skill}</span>
                 </li>
               ))}
@@ -75,8 +103,8 @@ const JobDetails = () => {
               Requirements
             </h1>
             <ul>
-              {requirements?.map((skill) => (
-                <li className='flex items-center'>
+              {requirements?.map((skill, index) => (
+                <li className='flex items-center' key={index}>
                   <BsArrowRightShort /> <span>{skill}</span>
                 </li>
               ))}
@@ -87,8 +115,8 @@ const JobDetails = () => {
               Responsibilities
             </h1>
             <ul>
-              {responsibilities?.map((skill) => (
-                <li className='flex items-center'>
+              {responsibilities?.map((skill, index) => (
+                <li className='flex items-center' key={index}>
                   <BsArrowRightShort /> <span>{skill}</span>
                 </li>
               ))}
@@ -102,42 +130,50 @@ const JobDetails = () => {
               General Q&A
             </h1>
             <div className='text-primary my-2'>
-              {queries?.map(({ question, email, reply, id }) => (
-                <div>
+              {queries?.map(({ question, email, reply, id }, index) => (
+                <div key={index}>
                   <small>{email}</small>
                   <p className='text-lg font-medium'>{question}</p>
-                  {reply?.map((item) => (
-                    <p className='flex items-center gap-2 relative left-5'>
+                  {reply?.map((item, replyIndex) => (
+                    <p className='flex items-center gap-2 relative left-5' key={replyIndex}>
                       <BsArrowReturnRight /> {item}
                     </p>
                   ))}
 
-                  <div className='flex gap-3 my-5'>
-                    <input placeholder='Reply' type='text' className='w-full' />
-                    <button
-                      className='shrink-0 h-14 w-14 bg-primary/10 border border-primary hover:bg-primary rounded-full transition-all  grid place-items-center text-primary hover:text-white'
-                      type='button'
-                    >
-                      <BsArrowRightShort size={30} />
-                    </button>
-                  </div>
+                  {role === 'employer' &&
+                    <div className='flex gap-3 my-5' >
+                      <input placeholder='Reply' type='text' className='w-full' onBlur={(e) => setUserReply(e.target.value)} />
+                      <button
+                        className='shrink-0 h-14 w-14 bg-primary/10 border border-primary hover:bg-primary rounded-full transition-all  grid place-items-center text-primary hover:text-white'
+                        type='button'
+                        onClick={() => handleReply(id)}
+                      >
+                        <BsArrowRightShort size={30} />
+                      </button>
+                    </div>
+                  }
                 </div>
               ))}
             </div>
 
-            <div className='flex gap-3 my-5'>
-              <input
-                placeholder='Ask a question...'
-                type='text'
-                className='w-full'
-              />
-              <button
-                className='shrink-0 h-14 w-14 bg-primary/10 border border-primary hover:bg-primary rounded-full transition-all  grid place-items-center text-primary hover:text-white'
-                type='button'
-              >
-                <BsArrowRightShort size={30} />
-              </button>
-            </div>
+            {
+              role === 'candidate' &&
+              <form className='flex gap-3 my-5' onSubmit={handleQuery}>
+                <input
+                  placeholder='Ask a question...'
+                  type='text'
+                  className='w-full'
+                  name="query"
+                />
+                <button
+                  className='shrink-0 h-14 w-14 bg-primary/10 border border-primary hover:bg-primary rounded-full transition-all  grid place-items-center text-primary hover:text-white'
+
+                  type='submit'
+                >
+                  <BsArrowRightShort size={30} />
+                </button>
+              </form>
+            }
           </div>
         </div>
       </div>

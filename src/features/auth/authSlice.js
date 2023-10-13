@@ -44,7 +44,6 @@ export const getUser = createAsyncThunk(
         const res = await fetch(`${process.env.REACT_APP_DEV_URL}/user/${email}`);
         const data = await res.json();
         if (data.status) {
-            console.log(data);
             return data
         }
         return email;
