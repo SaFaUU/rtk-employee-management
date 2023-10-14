@@ -6,7 +6,7 @@ import { usePostJobMutation } from "../../features/job/jobAPI";
 import { toast } from "react-hot-toast";
 
 const AddJob = () => {
-  const { companyName } = useSelector(state => state.auth.user)
+  const { companyName, email } = useSelector(state => state.auth.user)
   const [postJob, { isLoading }] = usePostJobMutation();
   const dispatch = useDispatch();
 
@@ -36,8 +36,9 @@ const AddJob = () => {
     toast.success('Successfully Added Job!')
     console.log(data);
     reset();
-    dispatch(postJob(data))
+    dispatch(postJob({ ...data, postedBy: email, jobOpen: true }))
   };
+
 
   return (
     <div className='flex justify-center items-center overflow-auto p-10'>

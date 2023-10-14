@@ -6,14 +6,22 @@ const jobAPI = apiSlice.injectEndpoints({
             query: () => ({
                 url: "/jobs",
                 method: "GET",
-            })
+            }),
+            providesTags: ["AllJobs"],
+        }),
+        getApplicants: build.query({
+            query: (id) => ({
+                url: `/applicants/${id}`,
+                method: "GET",
+            }),
         }),
         postJob: build.mutation({
             query: (body) => ({
                 url: "/job",
                 method: "POST",
                 body,
-            })
+            }),
+            invalidatesTags: ["PostedJobs", "AllJobs"],
         }),
         getJobById: build.query({
             query: (id) => ({
@@ -45,8 +53,30 @@ const jobAPI = apiSlice.injectEndpoints({
                 body,
             }),
             invalidatesTags: ["Querry"],
+        }),
+        postedJobs: build.query({
+            query: (email) => ({
+                url: `/posted-jobs/${email}`,
+                method: "GET",
+            }),
+            providesTags: ["PostedJobs", "JobOpen"],
+        }),
+        toggleJobStatus: build.mutation({
+            query: (body) => ({
+                url: `/toggle-job-status`,
+                method: "PATCH",
+                body,
+            }),
+            invalidatesTags: ["JobOpen", "AllJobs"],
+        }),
+        message: build.mutation({
+            query: (body) => ({
+                url: "/message",
+                method: "PATCH",
+                body,
+            }),
         })
     }),
 })
 
-export const { useGetJobsQuery, usePostJobMutation, useGetJobByIdQuery, useApplyMutation, useQuerryMutation, useReplyMutation } = jobAPI;
+export const { useGetJobsQuery, usePostJobMutation, useGetJobByIdQuery, useApplyMutation, useQuerryMutation, useReplyMutation, usePostedJobsQuery, useToggleJobStatusMutation, useGetApplicantsQuery, useMessageMutation } = jobAPI;
