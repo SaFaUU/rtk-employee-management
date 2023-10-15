@@ -8,12 +8,16 @@ import { useDispatch, useSelector } from "react-redux";
 const JobDetails = () => {
   const { id } = useParams();
   const { data, isLoading } = useGetJobByIdQuery(id, {
-    pollingInterval: 1000
+    // pollingInterval: 2000
   });
+
+
   const [apply] = useApplyMutation();
   const dispatch = useDispatch()
 
   const { _id: userId, email, role } = useSelector(state => state.auth.user)
+
+  console.log(userId);
 
   const [querry] = useQuerryMutation()
 
@@ -42,7 +46,7 @@ const JobDetails = () => {
     const data = {
       userId: userId,
       jobId: _id,
-      email: email
+      email: email,
     }
     dispatch(apply(data))
   };
@@ -66,6 +70,7 @@ const JobDetails = () => {
     console.log(newData);
     dispatch(reply(newData))
   }
+  console.log(applicants)
 
   return (
     <div className='pt-14 grid grid-cols-12 gap-5'>
@@ -78,8 +83,8 @@ const JobDetails = () => {
             <h1 className='text-xl font-semibold text-primary'>{position}</h1>
             {
               role === 'candidate' &&
-              <button className='btn' onClick={handleApply} disabled={applicants?.map((id) => id === userId)}>
-                {!applicants?.map((id) => id === userId) ? "Apply" : "Applied"}
+              <button className='btn' onClick={handleApply} disabled={(applicants?.find((applicant) => applicant.id === userId) && applicants.length > 0)}>
+                {applicants?.find((applicant) => applicant.id !== userId) || applicants?.length === 0 ? "Apply" : "Applied"}
               </button>
 
             }

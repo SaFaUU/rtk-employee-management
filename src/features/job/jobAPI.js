@@ -75,8 +75,20 @@ const jobAPI = apiSlice.injectEndpoints({
                 method: "PATCH",
                 body,
             }),
+        }),
+        getMessages: build.query({
+            query: ({ jobId, employerId, candidateId }) => ({
+                url: `/get-messages?jobId=${jobId}&employerId=${employerId}&candidateId=${candidateId}`,
+                method: "GET",
+            }),
+        }),
+        getAppliedJobs: build.query({
+            query: (email) => ({
+                url: `/applied-jobs/${email}`,
+                method: "GET",
+            }),
         })
     }),
 })
 
-export const { useGetJobsQuery, usePostJobMutation, useGetJobByIdQuery, useApplyMutation, useQuerryMutation, useReplyMutation, usePostedJobsQuery, useToggleJobStatusMutation, useGetApplicantsQuery, useMessageMutation } = jobAPI;
+export const { useGetJobsQuery, usePostJobMutation, useGetJobByIdQuery, useApplyMutation, useQuerryMutation, useReplyMutation, usePostedJobsQuery, useToggleJobStatusMutation, useGetApplicantsQuery, useMessageMutation, useGetMessagesQuery, useGetAppliedJobsQuery } = jobAPI;

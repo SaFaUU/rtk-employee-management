@@ -1,7 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { FaChevronLeft } from "react-icons/fa";
+import { useSelector } from "react-redux";
 const Sidebar = () => {
+  const { role } = useSelector(state => state.auth.user)
   return (
     <div className='bg-primary/10 col-span-2 h-screen sticky top-0'>
       <ul className='flex flex-col gap-2 w-full h-full  p-3'>
@@ -12,22 +14,42 @@ const Sidebar = () => {
           </Link>
           <h1 className='text-xl'>Dashboard</h1>
         </div>
-        <li>
-          <Link
-            className='hover:bg-primary hover:text-white bg-primary/10 transition-all w-full block py-2 px-3 rounded-full'
-            to='add-job'
-          >
-            Add Job
-          </Link>
-        </li>
-        <li>
-          <Link
-            className='hover:bg-primary hover:text-white bg-primary/10 transition-all w-full block py-2 px-3 rounded-full'
-            to='employer'
-          >
-            Dashboard
-          </Link>
-        </li>
+        {
+          role === 'employer' && (
+            <li>
+              <Link
+                className='hover:bg-primary hover:text-white bg-primary/10 transition-all w-full block py-2 px-3 rounded-full'
+                to='add-job'
+              >
+                Add Job
+              </Link>
+            </li>
+          )
+        }
+        {
+          role === 'employer' && (
+            <li>
+              <Link
+                className='hover:bg-primary hover:text-white bg-primary/10 transition-all w-full block py-2 px-3 rounded-full'
+                to='employer'
+              >
+                Dashboard
+              </Link>
+            </li>
+          )
+        }
+        {
+          role === 'candidate' && (
+            <li>
+              <Link
+                className='hover:bg-primary hover:text-white bg-primary/10 transition-all w-full block py-2 px-3 rounded-full'
+                to='applied-jobs'
+              >
+                Applied Jobs
+              </Link>
+            </li>
+          )
+        }
       </ul>
     </div>
   );

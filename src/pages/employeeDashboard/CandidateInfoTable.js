@@ -9,7 +9,7 @@ const CandidateInfoTable = () => {
     const id = useParams().id
     const { data, isLoading } = useGetApplicantsQuery(id)
     const applicants = data?.data
-    console.log(data?.data);
+    // console.log(data?.data);
     const [modalOpen, setModalOpen] = useState(false)
     const [appicantID, setApplicantID] = useState("")
 
@@ -24,7 +24,7 @@ const CandidateInfoTable = () => {
     return (
         <div className='flex justify-center items-center overflow-auto p-10'>
             {
-                modalOpen && <MessageModal closeModal={closeModal} candidateID={appicantID}></MessageModal>
+                modalOpen && <MessageModal closeModal={closeModal} candidateID={appicantID} jobID={id}></MessageModal>
             }
             <table className="min-w-full divide-y divide-gray-200">
                 <thead>

@@ -1,20 +1,31 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useMessageMutation } from '../../features/job/jobAPI';
+import { useGetMessagesQuery, useMessageMutation } from '../../features/job/jobAPI';
 
-const MessageModal = ({ closeModal, candidateID }) => {
+const MessageModal = ({ closeModal, candidateID, jobID }) => {
     const [newMessage, setNewMessage] = useState('');
-    const [messages, setMessages] = useState([]);
     const messageContainerRef = useRef(null);
-    const { _id: employerID, } = useSelector(state => state.auth.user);
+    const { _id: employerID, role } = useSelector(state => state.auth.user);
     const dispatch = useDispatch()
-    const [sendMessage,] = useMessageMutation();
+    const [sendMessage, { isLoading }] = useMessageMutation();
+
+    const { data: { data: messages } } = useGetMessagesQuery({ jobId: jobID, employerId: employerID, candidateId: candidateID }, {
+        pollingInterval: 1000
+    })
 
     const handleSendMessage = (message) => {
-        const newMessage = { text: message, sender: "employer" };
-        setMessages((prevMessages) => [...prevMessages, newMessage]);
-        const response = { text: 'Thanks for your message!', sender: "candidate" };
-        setMessages((prevMessages) => [...prevMessages, response]);
+        const newMessage = { text: message, sender: role };
+        const newData = {
+            jobID: jobID,
+            employerID: employerID,
+            candidateID: candidateID,
+            messages: [...messages, newMessage],
+        }
+        async function fetchMessages() {
+            dispatch(sendMessage(newData));
+        }
+        fetchMessages();
+        setNewMessage('');
     };
 
     const handleSendClick = () => {
@@ -36,15 +47,6 @@ const MessageModal = ({ closeModal, candidateID }) => {
         }
     }, [messages]);
 
-    useEffect(() => {
-        const newData = {
-            employerID: employerID,
-            candidateID: candidateID,
-            messages: messages
-        }
-        dispatch(sendMessage(newData));
-    }, [messages])
-
 
     return (
         <div className="bg-gray-100 pb-4 w-1/3 h-96 z-10 fixed top-60 rounded-lg shadow-md border">
@@ -60,7 +62,7 @@ const MessageModal = ({ closeModal, candidateID }) => {
                         messages?.map((message, index) => (
                             <div
                                 key={index}
-                                className={`mb-2 ${message.sender === 'candidate' ? 'text-left' : 'text-right'}`}
+                                className={`mb-2 ${message.sender !== role ? 'text-left' : 'text-right'}`}
                             >
                                 <div className="bg-white p-2 rounded-lg shadow-md inline-block">
                                     {message.text}

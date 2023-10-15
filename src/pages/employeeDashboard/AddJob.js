@@ -36,7 +36,7 @@ const AddJob = () => {
     toast.success('Successfully Added Job!')
     console.log(data);
     reset();
-    dispatch(postJob({ ...data, postedBy: email, jobOpen: true }))
+    dispatch(postJob({ ...data, postedBy: email, jobOpen: true, applicants: [] }))
   };
 
 
