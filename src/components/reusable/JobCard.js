@@ -1,5 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const JobCard = ({ jobData }) => {
   const navigate = useNavigate();
@@ -25,7 +25,10 @@ const JobCard = ({ jobData }) => {
       </div>
       <div className='flex justify-between items-center mt-5'>
         <p>{employmentType}</p>
-        <p className={`${approvalStatus === 'approved' ? 'bg-green-500' : 'bg-red-500'} text-white px-3 py-1 rounded-full`}>{approvalStatus}</p>
+        {
+          !window.location.pathname.includes("/jobs") &&
+          <p className={`${approvalStatus === 'approved' ? 'bg-green-500' : 'bg-red-500'} text-white px-3 py-1 rounded-full`}>{approvalStatus}</p>
+        }
         <button className='btn' onClick={() => navigate(`/job-details/${_id}`)}>
           Details
         </button>

@@ -11,7 +11,8 @@ const initialState = {
     },
     isLoading: true,
     isError: false,
-    error: ""
+    error: "",
+    appliedJobFilter: "none",
 }
 
 export const signUpUser = createAsyncThunk(
@@ -71,6 +72,11 @@ export const googleLogin = createAsyncThunk(
 const authApi = createSlice({
     name: "auth",
     initialState,
+    reducers: {
+        appliedJobFilterChange: (state, action) => {
+            state.appliedJobFilter = action.payload
+        }
+    },
     extraReducers: (builder) => {
         builder.addCase(signUpUser.pending, (state) => {
             state.isLoading = true;
@@ -147,5 +153,6 @@ const authApi = createSlice({
             })
     },
 });
+export const { appliedJobFilterChange } = authApi.actions;
 
 export default authApi.reducer;
