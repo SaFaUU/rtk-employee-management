@@ -9,9 +9,10 @@ const MessageModal = ({ closeModal, candidateID, jobID }) => {
     const dispatch = useDispatch()
     const [sendMessage, { isLoading }] = useMessageMutation();
 
-    const { data: { data: messages } } = useGetMessagesQuery({ jobId: jobID, employerId: employerID, candidateId: candidateID }, {
+    const { data } = useGetMessagesQuery({ jobId: jobID, employerId: employerID, candidateId: candidateID }, {
         pollingInterval: 1000
     })
+    const messages = data?.data
 
     const handleSendMessage = (message) => {
         const newMessage = { text: message, sender: role };
@@ -49,7 +50,7 @@ const MessageModal = ({ closeModal, candidateID, jobID }) => {
 
 
     return (
-        <div className="bg-gray-100 pb-4 w-1/3 h-96 z-10 fixed top-60 rounded-lg shadow-md border">
+        <div className="bg-gray-100 pb-4 w-1/3 h-96 z-10 fixed top-60 rounded-lg shadow-md border right-96">
             <div className="max-w-xl mx-auto flex flex-col justify-end rounded-lg  h-full">
                 <div className='grow'>
                     <div className='bg-purple-500 w-full flex items-center'>

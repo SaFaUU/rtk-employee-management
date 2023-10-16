@@ -6,7 +6,7 @@ const apiSlice = createApi({
     baseQuery: fetchBaseQuery({
         baseUrl: process.env.REACT_APP_DEV_URL
     }),
-    tagTypes: ['Job', "Querry", "PostedJobs", "JobOpen", "AllJobs", "AppliedJobs"],
+    tagTypes: ['Job', "Querry", "PostedJobs", "JobOpen", "AllJobs", "AppliedJobs", "Applicants"],
     endpoints: (build) => ({
 
     })

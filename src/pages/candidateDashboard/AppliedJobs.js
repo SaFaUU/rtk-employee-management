@@ -35,10 +35,17 @@ const AppliedJobs = () => {
     ));
   }
   if (appliedJobFilter === "recent") {
-    const unsortedData = [...data?.data];
-    content = unsortedData.sort((a, b) => { return new Date(b.timestamp) - new Date(a.timestamp) }).map((job, index) => (
-      <JobCard key={index} jobData={job} />
-    ));
+    if (data?.data.length > 1) {
+      const unsortedData = [...data?.data];
+      content = unsortedData.sort((a, b) => { return new Date(b.timestamp) - new Date(a.timestamp) }).map((job, index) => (
+        <JobCard key={index} jobData={job} />
+      ));
+    }
+    else {
+      content = data?.data.map((job, index) => (
+        <JobCard key={index} jobData={job} />
+      ));
+    }
   }
   function toTitleCase(str) {
     return str.replace(
